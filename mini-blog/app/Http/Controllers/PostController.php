@@ -4,65 +4,58 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 
 class PostController extends Controller
 {
     public function index()
     {
         $posts = Post::all();
-        return Inertia::render('Posts/Index', [
-            'posts' => $posts
-        ]);
+        return view('posts.index', compact('posts'));
     }
 
     public function show(Post $post)
     {
-        return Inertia::render('Posts/Show', [
-            'post' => $post
-        ]);
+        return view('posts.show', compact('post'));
     }
 
     public function create()
     {
-        return Inertia::render('Posts/Create');
+        return view('posts.create');
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required',
-            'content' => 'required',
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
         ]);
 
-        Post::create($request->all());
+        Post::create($request->only(['title', 'content']));
 
-        return redirect()->route('posts.index');
+        return redirect()->route('posts.index')->with('success', 'Article créé avec succès.');
     }
 
     public function edit(Post $post)
     {
-        return Inertia::render('Posts/Edit', [
-            'post' => $post
-        ]);
+        return view('posts.edit', compact('post'));
     }
 
     public function update(Request $request, Post $post)
     {
         $request->validate([
-            'title' => 'required',
-            'content' => 'required',
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
         ]);
 
-        $post->update($request->all());
+        $post->update($request->only(['title', 'content']));
 
-        return redirect()->route('posts.index');
+        return redirect()->route('posts.index')->with('success', 'Article mis à jour.');
     }
 
     public function destroy(Post $post)
     {
         $post->delete();
 
-        return redirect()->route('posts.index');
+        return redirect()->route('posts.index')->with('success', 'Article supprimé.');
     }
 }
