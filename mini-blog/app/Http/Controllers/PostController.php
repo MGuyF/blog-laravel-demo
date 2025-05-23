@@ -4,29 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class PostController extends Controller
 {
-    // Affiche tous les posts
     public function index()
     {
         $posts = Post::all();
-        return view('posts.index', compact('posts'));
+        return Inertia::render('Posts/Index', [
+            'posts' => $posts
+        ]);
     }
 
-    // Affiche un seul post
     public function show(Post $post)
     {
-        return view('posts.show', compact('post'));
+        return Inertia::render('Posts/Show', [
+            'post' => $post
+        ]);
     }
 
-    // Affiche le formulaire de création de post
     public function create()
     {
-        return view('posts.create');
+        return Inertia::render('Posts/Create');
     }
 
-    // Enregistre un nouveau post
     public function store(Request $request)
     {
         $request->validate([
@@ -39,13 +40,13 @@ class PostController extends Controller
         return redirect()->route('posts.index');
     }
 
-    // Affiche le formulaire d'édition d'un post
     public function edit(Post $post)
     {
-        return view('posts.edit', compact('post'));
+        return Inertia::render('Posts/Edit', [
+            'post' => $post
+        ]);
     }
 
-    // Met à jour un post
     public function update(Request $request, Post $post)
     {
         $request->validate([
@@ -58,10 +59,10 @@ class PostController extends Controller
         return redirect()->route('posts.index');
     }
 
-    // Supprime un post
     public function destroy(Post $post)
     {
         $post->delete();
+
         return redirect()->route('posts.index');
     }
 }
